@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Page</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif; /* Font style */
+            background-color: #000; /* Background color */
+            color: #fff; /* Text color */
+            margin: 0; /* Remove default margin */
+            padding: 20px; /* Padding around content */
+        }
+        h1 {
+            text-align: center; /* Center heading */
+            margin-bottom: 20px; /* Space below heading */
+        }
+        .product {
+            text-align: center; /* Center product details */
+            margin: 20px; /* Margin around product */
+        }
+        button {
+            background-color: #333; /* Button background color */
+            color: #fff; /* Button text color */
+            border: none; /* No border */
+            padding: 10px 20px; /* Button padding */
+            cursor: pointer; /* Pointer cursor */
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Transition effects */
+            border-radius: 5px; /* Rounded corners */
+        }
+        button:hover {
+            background-color: #555; /* Button hover color */
+            transform: scale(1.05); /* Button scale on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>Product Page</h1>
+
+    <div class="product">
+        <h2>Product 1</h2>
+        <p>Price: $10</p>
+        <button onclick="addToCart('Product 1', '$10')">Add to Cart</button>
+    </div>
+    <div class="product">
+        <h2>Product 2</h2>
+        <p>Price: $15</p>
+        <button onclick="addToCart('Product 2', '$15')">Add to Cart</button>
+    </div>
+    <div class="product">
+        <h2>Product 3</h2>
+        <p>Price: $20</p>
+        <button onclick="addToCart('Product 3', '$20')">Add to Cart</button>
+    </div>
+
+    <script>
+        const cartItems = []; // Initialize empty cart
+
+        function addToCart(name, price) {
+            cartItems.push({ name, price }); // Add item to cart
+            alert(`${name} has been added to your cart!`); // Notify user
+        }
+    </script>
+</body>
+</html>
