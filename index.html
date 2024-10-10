@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEIR GENETICS</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- CSS Styles and Animations -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        header {
+            padding: 20px;
+            text-align: center;
+            background: #111;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        header nav {
+            margin-top: 15px;
+        }
+
+        header nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        header nav a:hover {
+            color: #bbb;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-image: url('https://raw.githubusercontent.com/Heirgenetics/Heirgenetics/refs/heads/main/daniele-levis-pelusi-aRf1hjEHlhA-unsplash.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+            animation: fadeInUp 2s ease;
+        }
+
+        .cta-buttons {
+            margin-top: 20px;
+        }
+
+        .cta-buttons a {
+            text-decoration: none;
+            color: #fff;
+            background-color: #333;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .cta-buttons a:hover {
+            background-color: #555;
+            transform: scale(1.05);
+        }
+
+        section {
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .product-section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .products {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .product {
+            background: #111;
+            margin: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            transition: transform 0.3s ease;
+            animation: fadeInUp 1.5s ease;
+        }
+
+        .product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .product h3 {
+            margin: 15px 0;
+        }
+
+        .product p {
+            margin-bottom: 10px;
+        }
+
+        .product button {
+            padding: 10px 20px;
+            background-color: #333;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .product button:hover {
+            background-color: #555;
+            transform: scale(1.05);
+        }
+
+        .cart {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100%;
+            background-color: #111;
+            z-index: 1001;
+            transition: right 0.3s ease;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .cart.active {
+            right: 0;
+        }
+
+        .cart h2 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #222;
+            border-radius: 5px;
+        }
+
+        .close-cart {
+            background-color: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            float: right;
+            transition: color 0.3s ease;
+        }
+
+        .close-cart:hover {
+            color: #bbb;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+        }
+
+        .quantity-controls button {
+            padding: 5px 10px;
+            background-color: #333;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+
+        .clear-cart {
+            background-color: #f44336;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .clear-cart:hover {
+            background-color: #d32f2f;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        footer {
+            padding: 20px;
+            text-align: center;
+            background: #111;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        footer p {
+            color: #fff;
+            margin: 0;
+        }
+
+        /* Popup Styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1002;
+            color: #fff;
+        }
+
+        .popup h3 {
+            margin-bottom: 10px;
+        }
+
+        .popup button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #333;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .popup button:hover {
+            background-color: #555;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>HEIR GENETICS</h1>
+        <nav>
+            <a href="#products">Products</a>
+            <a href="#cart" onclick="toggleCart()">Cart</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div>
+            <h2>Discover the Power of Herbal Products</h2>
+            <div class="cta-buttons">
+                <a href="#products">Shop Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Section -->
+    <section id="products" class="product-section">
+        <h2>Our Herbal Products</h2>
+        <div class="products">
+            <div class="product">
+                <h3><a href="blue-dream.html">Blue Dream</a></h3>
+                <p>A balanced hybrid, perfect for relaxation and creativity.</p>
+                <p>Price: R100</p>
+                <button onclick="addToCart('Blue Dream', 100)">Add to Cart</button>
+            </div>
+            <div class="product">
+                <h3><a href="og-kush.html">OG Kush</a></h3>
+                <p>A classic strain with a strong and earthy flavor.</p>
+                <p>Price: R150</p>
+                <button onclick="addToCart('OG Kush', 150)">Add to Cart</button>
+            </div>
+            <div class="product">
+                <h3><a href="girl-scout-cookies.html">Girl Scout Cookies</a></h3>
+                <p>A hybrid strain known for its sweet and earthy aroma.</p>
+                <p>Price: R200</p>
+                <button onclick="addToCart('Girl Scout Cookies', 200)">Add to Cart</button>
+            </div>
+            <div class="product">
+                <h3><a href="rosin.html">Rosin</a></h3>
+                <p>A solventless extract with potent effects.</p>
+                <p>Price: R250</p>
+                <button onclick="addToCart('Rosin', 250)">Add to Cart</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart -->
+    <div class="cart" id="cart">
+        <button class="close-cart" onclick="toggleCart()">×</button>
+        <h2>Your Cart</h2>
+        <div id="cart-items"></div>
+        <p><strong>Total: R<span id="total-price">0</span></strong></p>
+        <button class="clear-cart" onclick="clearCart()">Clear Cart</button>
+        <button onclick="togglePopup()">Proceed to Checkout</button>
+    </div>
+
+    <!-- Checkout Popup -->
+    <div class="popup" id="checkout-popup">
+        <h3>Checkout</h3>
+        <p>Your total amount is: R<span id="checkout-total">0</span></p>
+        <button onclick="sendEmail()">Confirm</button>
+        <button onclick="togglePopup()">Close</button>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 HEIR GENETICS</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script>
+        // Initialize EmailJS
+        (function () {
+            emailjs.init('Heirgeneticspty');
+        })();
+
+        const cart = [];
+        const totalPriceElement = document.getElementById('total-price');
+        const checkoutTotalElement = document.getElementById('checkout-total');
+
+        function addToCart(productName, price) {
+            const item = cart.find(i => i.name === productName);
+            if (item) {
+                item.quantity++;
+            } else {
+                cart.push({ name: productName, price: price, quantity: 1 });
+            }
+            updateCart();
+        }
+
+        function removeFromCart(productName) {
+            const itemIndex = cart.findIndex(i => i.name === productName);
+            if (itemIndex > -1) {
+                cart[itemIndex].quantity--;
+                if (cart[itemIndex].quantity === 0) {
+                    cart.splice(itemIndex, 1);
+                }
+            }
+            updateCart();
+        }
+
+        function updateCart() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            cartItemsContainer.innerHTML = '';
+            let total = 0;
+
+            cart.forEach(item => {
+                total += item.price * item.quantity;
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <span>${item.name} (x${item.quantity}) - R${item.price * item.quantity}</span>
+                    <div class="quantity-controls">
+                        <button onclick="removeFromCart('${item.name}')">-</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="addToCart('${item.name}', ${item.price})">+</button>
+                    </div>
+                `;
+                cartItemsContainer.appendChild(cartItem);
+            });
+
+            totalPriceElement.innerText = total.toFixed(2);
+            checkoutTotalElement.innerText = total.toFixed(2);
+        }
+
+        function clearCart() {
+            cart.length = 0;
+            updateCart();
+        }
+
+        function toggleCart() {
+            const cartElement = document.getElementById('cart');
+            cartElement.classList.toggle('active');
+        }
+
+        function togglePopup() {
+            const popup = document.getElementById('checkout-popup');
+            popup.style.display = popup.style.display === 'none' || !popup.style.display ? 'block' : 'none';
+        }
+
+        function sendEmail() {
+            const total = totalPriceElement.innerText;
+            const templateParams = {
+                to_name: 'Customer',
+                from_name: 'HEIR GENETICS',
+                message: `Thank you for your purchase! Your total is R${total}.`
+            };
+
+            emailjs.send('service_cxs6u5c', 'Heirgeneticspty', templateParams)
+                .then(function (response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    alert('Email sent successfully!');
+                    togglePopup();
+                    clearCart();
+                }, function (error) {
+                    console.log('FAILED...', error);
+                    alert('Failed to send email. Please try again.');
+                });
+        }
+    </script>
+</body>
+
+</html>
