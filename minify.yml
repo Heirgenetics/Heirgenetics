@@ -1,0 +1,23 @@
+name: Minify CSS and JavaScript
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Minify CSS
+      run: |
+        npm install -g clean-css-cli
+        cleancss -o styles.min.css styles.css
+    
+    - name: Minify JS
+      run: |
+        npm install -g uglify-js
+        uglifyjs main.js -o main.min.js
