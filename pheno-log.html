@@ -54,6 +54,7 @@
         .entry-item {
             padding: 15px;
             border-bottom: 1px solid #444;
+            position: relative;
         }
 
         .entry-item:last-child {
@@ -113,6 +114,29 @@
             max-height: 90%;
             border-radius: 8px;
         }
+
+        /* Action buttons */
+        .action-buttons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .edit-button, .delete-button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .delete-button {
+            background-color: #e74c3c;
+        }
     </style>
 </head>
 <body>
@@ -159,8 +183,8 @@
     <script>
         const entryList = document.getElementById('entryList');
         let imageBase64Array = [];
+        let editingIndex = null;
 
-        // Load entries from local storage on page load
         window.onload = function() {
             loadEntries();
         };
@@ -182,7 +206,7 @@
                     const img = document.createElement("img");
                     img.src = reader.result;
                     img.classList.add("entry-image");
-                    img.onclick = () => openOverlay(reader.result);  // Set click event to enlarge image
+                    img.onclick = () => openOverlay(reader.result);
                     document.getElementById('imagePreviewContainer').appendChild(img);
                 };
                 reader.readAsDataURL(file);
@@ -203,10 +227,16 @@
             const entry = { date, age, strain, traits, images: imageBase64Array };
 
             let entries = JSON.parse(localStorage.getItem('entries')) || [];
-            entries.push(entry);
-            localStorage.setItem('entries', JSON.stringify(entries));
 
-            displayEntry(entry);
+            if (editingIndex !== null) {
+                entries[editingIndex] = entry; // Update existing entry
+                editingIndex = null; // Reset editing index
+            } else {
+                entries.push(entry); // Add new entry
+            }
+
+            localStorage.setItem('entries', JSON.stringify(entries));
+            renderEntries();
 
             // Reset form
             document.getElementById('date').value = '';
@@ -215,10 +245,16 @@
             document.getElementById('traits').value = '';
             document.getElementById('images').value = '';
             document.getElementById('imagePreviewContainer').innerHTML = "";
-            imageBase64Array = []; // Clear image data
+            imageBase64Array = [];
         }
 
-        function displayEntry(entry) {
+        function renderEntries() {
+            entryList.innerHTML = ""; // Clear existing entries
+            let entries = JSON.parse(localStorage.getItem('entries')) || [];
+            entries.forEach((entry, index) => displayEntry(entry, index));
+        }
+
+        function displayEntry(entry, index) {
             const entryItem = document.createElement('div');
             entryItem.classList.add('entry-item');
             entryItem.innerHTML = `
@@ -228,27 +264,56 @@
                 <div class="image-preview-container">
                     ${entry.images.map(image => `<img src="${image}" class="entry-image" alt="${entry.strain} image" onclick="openOverlay('${image}')">`).join('')}
                 </div>
+                <div class="action-buttons">
+                    <button class="edit-button" onclick="editEntry(${index})">Edit</button>
+                    <button class="delete-button" onclick="deleteEntry(${index})">Delete</button>
+                </div>
             `;
 
             entryList.appendChild(entryItem);
         }
 
         function loadEntries() {
+            renderEntries(); // Load all entries on page load
+        }
+
+        function deleteEntry(index) {
             let entries = JSON.parse(localStorage.getItem('entries')) || [];
-            entries.forEach(entry => displayEntry(entry));
+            entries.splice(index, 1); // Remove entry
+            localStorage.setItem('entries', JSON.stringify(entries));
+            renderEntries(); // Refresh the display
+        }
+
+        function editEntry(index) {
+            let entries = JSON.parse(localStorage.getItem('entries')) || [];
+            let entry = entries[index];
+
+            document.getElementById('date').value = entry.date;
+            document.getElementById('age').value = entry.age;
+            document.getElementById('strain').value = entry.strain;
+            document.getElementById('traits').value = entry.traits;
+            imageBase64Array = entry.images; // Preserve images for editing
+            document.getElementById('imagePreviewContainer').innerHTML = ""; // Clear existing previews
+
+            entry.images.forEach(image => {
+                const img = document.createElement("img");
+                img.src = image;
+                img.classList.add("entry-image");
+                img.onclick = () => openOverlay(image);
+                document.getElementById('imagePreviewContainer').appendChild(img);
+            });
+
+            editingIndex = index; // Set the index for editing
         }
 
         function openOverlay(imageSrc) {
-            const overlay = document.getElementById('overlay');
-            const overlayImage = document.getElementById('overlayImage');
-            overlayImage.src = imageSrc;
-            overlay.style.display = 'flex';
+            document.getElementById('overlayImage').src = imageSrc;
+            document.getElementById('overlay').style.display = "flex"; // Show overlay
         }
 
         function closeOverlay() {
-            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('overlay').style.display = "none"; // Hide overlay
         }
     </script>
-
 </body>
 </html>
