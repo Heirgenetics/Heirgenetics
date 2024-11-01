@@ -42,6 +42,7 @@
             text-align: center;
             margin-bottom: 20px;
             transition: transform 0.3s ease;
+            position: relative;
         }
 
         .gallery-item:hover {
@@ -74,6 +75,12 @@
         .strain-rating {
             font-size: 0.9em;
             color: #ffb700;
+            margin-top: 5px;
+        }
+
+        .author-name {
+            font-size: 0.9em;
+            color: #aaa;
             margin-top: 5px;
         }
 
@@ -160,6 +167,33 @@
         .close:hover {
             color: #bbb;
         }
+
+        .edit-btn, .delete-btn {
+            padding: 5px 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .edit-btn {
+            background-color: #ffb700;
+            color: #000;
+        }
+
+        .delete-btn {
+            background-color: #d9534f;
+            color: #fff;
+        }
+
+        .edit-btn:hover {
+            background-color: #ffc700;
+        }
+
+        .delete-btn:hover {
+            background-color: #c9302c;
+        }
     </style>
 </head>
 <body>
@@ -168,26 +202,7 @@
     <h2>Explore our premium cannabis strains, each carefully selected for quality and potency.</h2>
     <p style="text-align: center; color: #ccc;">This gallery is dedicated to the appreciation of exceptional cannabis strains, showcasing their unique characteristics and beauty.</p>
 
-    <div class="gallery" id="strainGallery">
-        <div class="gallery-item">
-            <img src="https://cdn.shopify.com/s/files/1/2426/0015/files/large-nug-of-cannabis-flower-with-orange-hairs-bright-green-black-background.jpg?v=1668212483" alt="Girl Scout Cookies" onclick="openModal(this)">
-            <div class="strain-name" onclick="openModal(this.previousElementSibling)">Girl Scout Cookies</div>
-            <div class="strain-description">A balanced hybrid with euphoric highs and a sweet, earthy aroma. Perfect for relaxation and creativity.</div>
-            <div class="strain-rating">Rating: ★★★★☆ (85%) | THC: 22% | Flavor: Sweet, Earthy</div>
-        </div>
-        <div class="gallery-item">
-            <img src="https://th.bing.com/th/id/OIP.rXIEYMATPjSS9AqfxUnaOwHaHa?w=800&h=800&rs=1&pid=ImgDetMain" alt="Sour Diesel BX3" onclick="openModal(this)">
-            <div class="strain-name" onclick="openModal(this.previousElementSibling)">Sour Diesel BX3</div>
-            <div class="strain-description">A legendary sativa known for its uplifting, energizing effects and strong diesel-like scent.</div>
-            <div class="strain-rating">Rating: ★★★★★ (90%) | THC: 24% | Flavor: Diesel, Citrus</div>
-        </div>
-        <div class="gallery-item">
-            <img src="https://cdn.shopify.com/s/files/1/0975/1130/products/roaddawg_1024x1024.jpg?v=1550866342" alt="Road Dawg" onclick="openModal(this)">
-            <div class="strain-name" onclick="openModal(this.previousElementSibling)">Road Dawg</div>
-            <div class="strain-description">Potent and earthy, this strain is ideal for seasoned users seeking a powerful high.</div>
-            <div class="strain-rating">Rating: ★★★★☆ (80%) | THC: 21% | Flavor: Earthy, Spicy</div>
-        </div>
-    </div>
+    <div class="gallery" id="strainGallery"></div>
 
     <div class="form-container">
         <h2>Add New Strain</h2>
@@ -208,6 +223,9 @@
 
         <label for="strainFlavor">Flavor Profile:</label>
         <input type="text" id="strainFlavor" placeholder="Enter flavor profile" required>
+
+        <label for="strainAuthor">Author Name:</label>
+        <input type="text" id="strainAuthor" placeholder="Enter your name (optional)">
 
         <button id="addStrainBtn">Add Strain</button>
     </div>
@@ -244,9 +262,10 @@
             const strainRating = document.getElementById('strainRating').value;
             const strainTHC = document.getElementById('strainTHC').value;
             const strainFlavor = document.getElementById('strainFlavor').value;
+            const strainAuthor = document.getElementById('strainAuthor').value || "Unknown";
 
             if (!strainName || !strainImage || !strainDescription || !strainRating || !strainTHC || !strainFlavor) {
-                alert('Please fill in all fields!');
+                alert('Please fill in all required fields!');
                 return;
             }
 
@@ -261,19 +280,78 @@
                     <div class="strain-name" onclick="openModal(this.previousElementSibling)">${strainName}</div>
                     <div class="strain-description">${strainDescription}</div>
                     <div class="strain-rating">Rating: ★★★★★ (${strainRating * 20}%) | THC: ${strainTHC}% | Flavor: ${strainFlavor}</div>
+                    <div class="author-name">Added by: ${strainAuthor}</div>
+                    <button class="edit-btn" onclick="editEntry(this)">Edit</button>
+                    <button class="delete-btn" onclick="deleteEntry(this)">Delete</button>
                 `;
                 gallery.appendChild(newItem);
+                saveToLocalStorage(newItem.innerHTML);
 
                 // Clear the input fields
-                document.getElementById('strainName').value = '';
-                document.getElementById('strainImage').value = '';
-                document.getElementById('strainDescription').value = '';
-                document.getElementById('strainRating').value = '';
-                document.getElementById('strainTHC').value = '';
-                document.getElementById('strainFlavor').value = '';
+                clearInputFields();
             }
             reader.readAsDataURL(strainImage);
         });
+
+        function clearInputFields() {
+            document.getElementById('strainName').value = '';
+            document.getElementById('strainImage').value = '';
+            document.getElementById('strainDescription').value = '';
+            document.getElementById('strainRating').value = '';
+            document.getElementById('strainTHC').value = '';
+            document.getElementById('strainFlavor').value = '';
+            document.getElementById('strainAuthor').value = '';
+        }
+
+        function saveToLocalStorage(newEntry) {
+            let entries = JSON.parse(localStorage.getItem('strainEntries')) || [];
+            entries.push(newEntry);
+            localStorage.setItem('strainEntries', JSON.stringify(entries));
+        }
+
+        function loadFromLocalStorage() {
+            const entries = JSON.parse(localStorage.getItem('strainEntries')) || [];
+            const gallery = document.getElementById('strainGallery');
+            entries.forEach(entry => {
+                const newItem = document.createElement('div');
+                newItem.className = 'gallery-item';
+                newItem.innerHTML = entry;
+                gallery.appendChild(newItem);
+            });
+        }
+
+        function editEntry(button) {
+            const item = button.parentElement;
+            const strainName = item.querySelector('.strain-name').innerText;
+            const strainDescription = item.querySelector('.strain-description').innerText;
+            const strainRating = item.querySelector('.strain-rating').innerText;
+            const strainAuthor = item.querySelector('.author-name').innerText.replace('Added by: ', '');
+            
+            const strainImage = item.querySelector('img').src;
+
+            document.getElementById('strainName').value = strainName;
+            document.getElementById('strainDescription').value = strainDescription;
+            document.getElementById('strainRating').value = parseInt(strainRating.charAt(8)) || 0;
+            document.getElementById('strainTHC').value = parseInt(strainRating.split('|')[1].split(':')[1]) || 0;
+            document.getElementById('strainFlavor').value = strainRating.split('|')[2].split(': ')[1] || '';
+            document.getElementById('strainAuthor').value = strainAuthor;
+            button.parentElement.remove();
+            saveEntries();
+        }
+
+        function deleteEntry(button) {
+            const item = button.parentElement;
+            item.remove();
+            saveEntries();
+        }
+
+        function saveEntries() {
+            const gallery = document.getElementById('strainGallery');
+            const entries = Array.from(gallery.children).map(item => item.innerHTML);
+            localStorage.setItem('strainEntries', JSON.stringify(entries));
+        }
+
+        window.onload = loadFromLocalStorage;
     </script>
 </body>
 </html>
