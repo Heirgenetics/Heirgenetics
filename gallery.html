@@ -13,71 +13,151 @@
             padding: 20px;
             max-width: 1000px;
             margin: auto;
+            line-height: 1.6;
         }
 
         h1 {
             text-align: center;
-            margin-bottom: 20px;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: 400;
+            color: #aaa;
+            margin-bottom: 30px;
         }
 
         .gallery {
             display: flex;
             flex-wrap: wrap;
+            gap: 20px;
             justify-content: space-between;
         }
 
         .gallery-item {
-            width: calc(33.33% - 10px); /* 3 images per row with spacing */
-            margin-bottom: 20px; /* Space between rows */
+            width: calc(33.33% - 10px);
+            text-align: center;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
         }
 
         img {
             display: block;
             width: 100%;
             height: auto;
-            border-radius: 8px; /* Rounded corners for images */
+            border-radius: 8px;
+            cursor: pointer;
         }
 
         .strain-name {
-            text-align: center;
-            margin-top: 5px; /* Space between image and strain name */
+            font-size: 1.2em;
+            margin-top: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #ffb700;
+            text-transform: uppercase;
+        }
+
+        .strain-description {
+            font-size: 0.9em;
+            color: #ccc;
+            margin-top: 5px;
         }
 
         footer {
             text-align: center;
             margin-top: 40px;
+            font-size: 0.8em;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            overflow: auto;
+            align-items: center;
+            justify-content: center;
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .close:hover {
+            color: #bbb;
         }
     </style>
 </head>
 <body>
 
     <h1>Gallery</h1>
+    <h2>Explore our premium cannabis strains, each carefully selected for quality and potency.</h2>
+
     <div class="gallery">
         <div class="gallery-item">
-            <img src="https://cdn.shopify.com/s/files/1/2426/0015/files/large-nug-of-cannabis-flower-with-orange-hairs-bright-green-black-background.jpg?v=1668212483" alt="Strain 1">
-            <div class="strain-name">Girl Scout Cookies</div>
+            <img src="https://cdn.shopify.com/s/files/1/2426/0015/files/large-nug-of-cannabis-flower-with-orange-hairs-bright-green-black-background.jpg?v=1668212483" alt="Girl Scout Cookies" onclick="openModal(this)">
+            <div class="strain-name" onclick="openModal(this.previousElementSibling)">Girl Scout Cookies</div>
+            <div class="strain-description">A balanced hybrid with euphoric highs and a sweet, earthy aroma. Perfect for relaxation and creativity.</div>
         </div>
         <div class="gallery-item">
-            <img src="https://th.bing.com/th/id/OIP.rXIEYMATPjSS9AqfxUnaOwHaHa?w=800&h=800&rs=1&pid=ImgDetMain" alt="Strain 2">
-            <div class="strain-name">Sour Diesel BX3</div>
+            <img src="https://th.bing.com/th/id/OIP.rXIEYMATPjSS9AqfxUnaOwHaHa?w=800&h=800&rs=1&pid=ImgDetMain" alt="Sour Diesel BX3" onclick="openModal(this)">
+            <div class="strain-name" onclick="openModal(this.previousElementSibling)">Sour Diesel BX3</div>
+            <div class="strain-description">A legendary sativa known for its uplifting, energizing effects and strong diesel-like scent.</div>
         </div>
         <div class="gallery-item">
-            <img src="https://cdn.shopify.com/s/files/1/0975/1130/products/roaddawg_1024x1024.jpg?v=1550866342" alt="Strain 3">
-            <div class="strain-name">Road Dawg</div>
+            <img src="https://cdn.shopify.com/s/files/1/0975/1130/products/roaddawg_1024x1024.jpg?v=1550866342" alt="Road Dawg" onclick="openModal(this)">
+            <div class="strain-name" onclick="openModal(this.previousElementSibling)">Road Dawg</div>
+            <div class="strain-description">Potent and earthy, this strain is ideal for seasoned users seeking a powerful high.</div>
         </div>
         <div class="gallery-item">
-            <img src="https://th.bing.com/th/id/OIP.nSvyckoRA4LlexjB6bgXuwHaHa?w=1280&h=1280&rs=1&pid=ImgDetMain" alt="Strain 4">
-            <div class="strain-name">Trufflez</div>
+            <img src="https://th.bing.com/th/id/OIP.nSvyckoRA4LlexjB6bgXuwHaHa?w=1280&h=1280&rs=1&pid=ImgDetMain" alt="Trufflez" onclick="openModal(this)">
+            <div class="strain-name" onclick="openModal(this.previousElementSibling)">Trufflez</div>
+            <div class="strain-description">Known for its rich, fruity aroma, this strain provides a deeply relaxing body high.</div>
         </div>
         <div class="gallery-item">
-            <img src="https://cdn.shopify.com/s/files/1/0975/1130/products/Dosido_1024x1024.jpg?v=1517399076" alt="Strain 5">
-            <div class="strain-name">Dosido</div>
+            <img src="https://cdn.shopify.com/s/files/1/0975/1130/products/Dosido_1024x1024.jpg?v=1517399076" alt="Dosido" onclick="openModal(this)">
+            <div class="strain-name" onclick="openModal(this.previousElementSibling)">Dosido</div>
+            <div class="strain-description">A balanced hybrid with calming effects and a sweet, floral aroma. Ideal for unwinding after a long day.</div>
         </div>
         <div class="gallery-item">
-            <img src="https://images.dutchie.com/cbf3e8ba309998688b2c2ab48ab17de5" alt="Strain 6">
-            <div class="strain-name">Skunkberry</div>
+            <img src="https://images.dutchie.com/cbf3e8ba309998688b2c2ab48ab17de5" alt="Skunkberry" onclick="openModal(this)">
+            <div class="strain-name" onclick="openModal(this.previousElementSibling)">Skunkberry</div>
+            <div class="strain-description">A rare indica with berry and earthy flavors, delivering a full-body relaxation experience.</div>
         </div>
-        <!-- Add more images as needed -->
+    </div>
+
+    <!-- Modal for enlarged image -->
+    <div id="myModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="img01">
     </div>
 
     <footer>
@@ -86,6 +166,18 @@
 
     <script>
         document.getElementById('currentYear').innerText = new Date().getFullYear();
+
+        function openModal(img) {
+            var modal = document.getElementById("myModal");
+            var modalImg = document.getElementById("img01");
+            modal.style.display = "flex";
+            modalImg.src = img.src;
+        }
+
+        function closeModal() {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
     </script>
 </body>
 </html>
