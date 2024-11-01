@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Trait Selection</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #000; /* Black background */
+            color: #fff; /* White text */
+        }
+        h1 {
+            text-align: center;
+            color: #fff;
+        }
+        #strain-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        #strain-list li {
+            padding: 10px;
+            background: #333; /* Dark gray background for list items */
+            margin: 5px 0;
+            border: 1px solid #444; /* Darker border */
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        canvas {
+            margin-top: 20px;
+            max-width: 100%;
+        }
+        #metrics {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+        }
+        .metric {
+            background: #444; /* Darker gray for metrics */
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            flex: 1;
+            margin: 0 10px;
+        }
+        input {
+            padding: 5px;
+            border: 1px solid #666; /* Input border */
+            border-radius: 4px;
+            background: #555; /* Input background */
+            color: #fff; /* Input text color */
+        }
+    </style>
+</head>
+<body>
+    <h1>Trait Selection for Exodus Cheese Strains</h1>
+    <ul id="strain-list">
+        <!-- Strains will be listed here -->
+        <!-- List items will be dynamically generated -->
+    </ul>
+    <canvas id="growthChart" width="400" height="200"></canvas> <!-- Growth Chart -->
+    <div id="metrics">
+        <!-- Growth metrics will be displayed here -->
+    </div>
+
+    <script>
+        // Generate random growth data for the strains
+        const plantData = Array.from({ length: 70 }, (_, index) => {
+            const strainNumber = index + 1;
+            const growthStages = Array.from({ length: 5 }, () => Math.floor(Math.random() * 100) + 1); // Random growth data
+            return {
+                strain: `Exodus Cheese S1 #${strainNumber}`,
+                growthStages: growthStages,
+                height: Math.floor(Math.random() * 100) + 10, // Random height in cm
+                yield: Math.floor(Math.random() * 100) + 20, // Random yield in grams
+                floweringTime: Math.floor(Math.random() * 14) + 56 // Random flowering time in days
+            };
+        });
+
+        // Populate the strain list and growth metrics
+        const strainList = document.getElementById('strain-list');
+        const metricsContainer = document.getElementById('metrics');
+
+        plantData.forEach(plant => {
+            const listItem = document.createElement('li');
+
+            // Create input for notes
+            const noteInput = document.createElement('input');
+            noteInput.type = 'text';
+            noteInput.placeholder = 'Add notes here...';
+            noteInput.style.width = '40%'; // Adjust width as needed
+
+            // Create strain name text
+            const strainText = document.createElement('span');
+            strainText.textContent = plant.strain;
+            strainText.style.flex = '1'; // Ensure the strain text takes the remaining space
+
+            listItem.appendChild(strainText);
+            listItem.appendChild(noteInput);
+            strainList.appendChild(listItem);
+
+            // Create metric card
+            const metricCard = document.createElement('div');
+            metricCard.className = 'metric';
+            metricCard.innerHTML = `
+                <h3>${plant.strain}</h3>
+                <p>Height: ${plant.height} cm</p>
+                <p>Yield: ${plant.yield} g</p>
+                <p>Flowering Time: ${plant.floweringTime} days</p>
+            `;
+            metricsContainer.appendChild(metricCard);
+        });
+
+        // Chart.js setup
+        const ctx = document.getElementById('growthChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
+                datasets: plantData.map(plant => ({
+                    label: plant.strain,
+                    data: plant.growthStages,
+                    borderColor: `hsl(${Math.random() * 360}, 100%, 50%)`, // Random color
+                    fill: false
+                }))
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Growth (cm)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Growth Stage'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
