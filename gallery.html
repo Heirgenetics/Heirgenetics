@@ -77,6 +77,46 @@
             margin-top: 5px;
         }
 
+        .form-container {
+            margin-top: 40px;
+            padding: 20px;
+            border: 1px solid #ffb700;
+            border-radius: 8px;
+            background-color: #222;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .form-container input[type="text"],
+        .form-container input[type="number"],
+        .form-container input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        .form-container button {
+            padding: 10px 15px;
+            background-color: #ffb700;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .form-container button:hover {
+            background-color: #ffc700;
+        }
+
         footer {
             text-align: center;
             margin-top: 40px;
@@ -128,7 +168,7 @@
     <h2>Explore our premium cannabis strains, each carefully selected for quality and potency.</h2>
     <p style="text-align: center; color: #ccc;">This gallery is dedicated to the appreciation of exceptional cannabis strains, showcasing their unique characteristics and beauty.</p>
 
-    <div class="gallery">
+    <div class="gallery" id="strainGallery">
         <div class="gallery-item">
             <img src="https://cdn.shopify.com/s/files/1/2426/0015/files/large-nug-of-cannabis-flower-with-orange-hairs-bright-green-black-background.jpg?v=1668212483" alt="Girl Scout Cookies" onclick="openModal(this)">
             <div class="strain-name" onclick="openModal(this.previousElementSibling)">Girl Scout Cookies</div>
@@ -147,6 +187,29 @@
             <div class="strain-description">Potent and earthy, this strain is ideal for seasoned users seeking a powerful high.</div>
             <div class="strain-rating">Rating: ★★★★☆ (80%) | THC: 21% | Flavor: Earthy, Spicy</div>
         </div>
+    </div>
+
+    <div class="form-container">
+        <h2>Add New Strain</h2>
+        <label for="strainName">Strain Name:</label>
+        <input type="text" id="strainName" placeholder="Enter strain name" required>
+
+        <label for="strainImage">Upload Image:</label>
+        <input type="file" id="strainImage" accept="image/*" required>
+
+        <label for="strainDescription">Description:</label>
+        <input type="text" id="strainDescription" placeholder="Enter strain description" required>
+
+        <label for="strainRating">Rating:</label>
+        <input type="number" id="strainRating" placeholder="Enter rating out of 5" min="1" max="5" required>
+
+        <label for="strainTHC">THC Percentage:</label>
+        <input type="number" id="strainTHC" placeholder="Enter THC percentage" min="0" max="100" required>
+
+        <label for="strainFlavor">Flavor Profile:</label>
+        <input type="text" id="strainFlavor" placeholder="Enter flavor profile" required>
+
+        <button id="addStrainBtn">Add Strain</button>
     </div>
 
     <!-- Modal for enlarged image -->
@@ -173,6 +236,44 @@
             var modal = document.getElementById("myModal");
             modal.style.display = "none";
         }
+
+        document.getElementById('addStrainBtn').addEventListener('click', function() {
+            const strainName = document.getElementById('strainName').value;
+            const strainImage = document.getElementById('strainImage').files[0];
+            const strainDescription = document.getElementById('strainDescription').value;
+            const strainRating = document.getElementById('strainRating').value;
+            const strainTHC = document.getElementById('strainTHC').value;
+            const strainFlavor = document.getElementById('strainFlavor').value;
+
+            if (!strainName || !strainImage || !strainDescription || !strainRating || !strainTHC || !strainFlavor) {
+                alert('Please fill in all fields!');
+                return;
+            }
+
+            const gallery = document.getElementById('strainGallery');
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const newItem = document.createElement('div');
+                newItem.className = 'gallery-item';
+                newItem.innerHTML = `
+                    <img src="${e.target.result}" alt="${strainName}" onclick="openModal(this)">
+                    <div class="strain-name" onclick="openModal(this.previousElementSibling)">${strainName}</div>
+                    <div class="strain-description">${strainDescription}</div>
+                    <div class="strain-rating">Rating: ★★★★★ (${strainRating * 20}%) | THC: ${strainTHC}% | Flavor: ${strainFlavor}</div>
+                `;
+                gallery.appendChild(newItem);
+
+                // Clear the input fields
+                document.getElementById('strainName').value = '';
+                document.getElementById('strainImage').value = '';
+                document.getElementById('strainDescription').value = '';
+                document.getElementById('strainRating').value = '';
+                document.getElementById('strainTHC').value = '';
+                document.getElementById('strainFlavor').value = '';
+            }
+            reader.readAsDataURL(strainImage);
+        });
     </script>
 </body>
 </html>
