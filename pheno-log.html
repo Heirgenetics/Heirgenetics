@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pheno Hunting Journal - HEIR GENETICS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #121212;
+            color: #fff;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        .entry-form, .entry-log {
+            background-color: #222;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="date"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+
+        .entry-list {
+            margin-top: 20px;
+        }
+
+        .entry-item {
+            padding: 15px;
+            border-bottom: 1px solid #444;
+        }
+
+        .entry-item:last-child {
+            border-bottom: none;
+        }
+
+        .entry-item h3 {
+            margin: 0;
+            font-size: 1.2em;
+            color: #f7b42c;
+        }
+
+        .log-button {
+            display: inline-block;
+            background-color: #f7b42c;
+            color: #121212;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .entry-image {
+            width: 100%;
+            max-width: 150px;
+            height: auto;
+            margin-top: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .image-preview-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Overlay for enlarged image */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .overlay img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Pheno Hunting Journal</h1>
+    <h2>Log and Track Pheno Traits Over Time</h2>
+
+    <!-- Entry Form -->
+    <div class="entry-form">
+        <h2>New Pheno Entry</h2>
+        <label for="date">Date</label>
+        <input type="date" id="date" required>
+
+        <label for="age">Age from Seed (Days)</label>
+        <input type="text" id="age" placeholder="Enter the number of days">
+
+        <label for="strain">Strain Name</label>
+        <input type="text" id="strain" placeholder="Enter strain name">
+
+        <label for="traits">Observed Traits</label>
+        <textarea id="traits" placeholder="Enter observed phenotypic traits"></textarea>
+
+        <label for="images">Upload Images (up to 5)</label>
+        <input type="file" id="images" accept="image/*" multiple onchange="previewImages(event)">
+
+        <div class="image-preview-container" id="imagePreviewContainer"></div>
+
+        <button class="log-button" onclick="addEntry()">Add Entry</button>
+    </div>
+
+    <!-- Entry Log -->
+    <div class="entry-log">
+        <h2>Pheno Log</h2>
+        <div class="entry-list" id="entryList">
+            <!-- Entries will be dynamically added here -->
+        </div>
+    </div>
+
+    <!-- Image Overlay for Enlarged View -->
+    <div class="overlay" id="overlay" onclick="closeOverlay()">
+        <img id="overlayImage" src="">
+    </div>
+
+    <script>
+        const entryList = document.getElementById('entryList');
+        let imageBase64Array = [];
+
+        // Load entries from local storage on page load
+        window.onload = function() {
+            loadEntries();
+        };
+
+        function previewImages(event) {
+            const files = event.target.files;
+            imageBase64Array = [];
+            document.getElementById('imagePreviewContainer').innerHTML = "";
+
+            if (files.length > 5) {
+                alert('Please select up to 5 images.');
+                return;
+            }
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    imageBase64Array.push(reader.result);
+                    const img = document.createElement("img");
+                    img.src = reader.result;
+                    img.classList.add("entry-image");
+                    img.onclick = () => openOverlay(reader.result);  // Set click event to enlarge image
+                    document.getElementById('imagePreviewContainer').appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function addEntry() {
+            const date = document.getElementById('date').value;
+            const age = document.getElementById('age').value;
+            const strain = document.getElementById('strain').value;
+            const traits = document.getElementById('traits').value;
+
+            if (!date || !age || !strain || !traits) {
+                alert('Please fill out all fields before adding an entry.');
+                return;
+            }
+
+            const entry = { date, age, strain, traits, images: imageBase64Array };
+
+            let entries = JSON.parse(localStorage.getItem('entries')) || [];
+            entries.push(entry);
+            localStorage.setItem('entries', JSON.stringify(entries));
+
+            displayEntry(entry);
+
+            // Reset form
+            document.getElementById('date').value = '';
+            document.getElementById('age').value = '';
+            document.getElementById('strain').value = '';
+            document.getElementById('traits').value = '';
+            document.getElementById('images').value = '';
+            document.getElementById('imagePreviewContainer').innerHTML = "";
+            imageBase64Array = []; // Clear image data
+        }
+
+        function displayEntry(entry) {
+            const entryItem = document.createElement('div');
+            entryItem.classList.add('entry-item');
+            entryItem.innerHTML = `
+                <h3>${entry.strain} - Day ${entry.age}</h3>
+                <p><strong>Date:</strong> ${entry.date}</p>
+                <p><strong>Traits:</strong> ${entry.traits}</p>
+                <div class="image-preview-container">
+                    ${entry.images.map(image => `<img src="${image}" class="entry-image" alt="${entry.strain} image" onclick="openOverlay('${image}')">`).join('')}
+                </div>
+            `;
+
+            entryList.appendChild(entryItem);
+        }
+
+        function loadEntries() {
+            let entries = JSON.parse(localStorage.getItem('entries')) || [];
+            entries.forEach(entry => displayEntry(entry));
+        }
+
+        function openOverlay(imageSrc) {
+            const overlay = document.getElementById('overlay');
+            const overlayImage = document.getElementById('overlayImage');
+            overlayImage.src = imageSrc;
+            overlay.style.display = 'flex';
+        }
+
+        function closeOverlay() {
+            document.getElementById('overlay').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>
