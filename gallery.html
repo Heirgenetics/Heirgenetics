@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - HEIR GENETICS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .gallery-item {
+            width: calc(33.33% - 10px); /* 3 images per row with spacing */
+            margin-bottom: 20px; /* Space between rows */
+        }
+
+        img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 8px; /* Rounded corners for images */
+        }
+
+        .strain-name {
+            text-align: center;
+            margin-top: 5px; /* Space between image and strain name */
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Gallery</h1>
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="https://cdn.shopify.com/s/files/1/2426/0015/files/large-nug-of-cannabis-flower-with-orange-hairs-bright-green-black-background.jpg?v=1668212483" alt="Strain 1">
+            <div class="strain-name">Girl Scout Cookies</div>
+        </div>
+        <div class="gallery-item">
+            <img src="https://th.bing.com/th/id/OIP.rXIEYMATPjSS9AqfxUnaOwHaHa?w=800&h=800&rs=1&pid=ImgDetMain" alt="Strain 2">
+            <div class="strain-name">Sour Diesel BX3</div>
+        </div>
+        <div class="gallery-item">
+            <img src="https://cdn.shopify.com/s/files/1/0975/1130/products/roaddawg_1024x1024.jpg?v=1550866342" alt="Strain 3">
+            <div class="strain-name">Road Dawg</div>
+        </div>
+        <div class="gallery-item">
+            <img src="https://th.bing.com/th/id/OIP.nSvyckoRA4LlexjB6bgXuwHaHa?w=1280&h=1280&rs=1&pid=ImgDetMain" alt="Strain 4">
+            <div class="strain-name">Trufflez</div>
+        </div>
+        <div class="gallery-item">
+            <img src="https://cdn.shopify.com/s/files/1/0975/1130/products/Dosido_1024x1024.jpg?v=1517399076" alt="Strain 5">
+            <div class="strain-name">Dosido</div>
+        </div>
+        <div class="gallery-item">
+            <img src="https://images.dutchie.com/cbf3e8ba309998688b2c2ab48ab17de5" alt="Strain 6">
+            <div class="strain-name">Skunkberry</div>
+        </div>
+        <!-- Add more images as needed -->
+    </div>
+
+    <footer>
+        <p>&copy; <span id="currentYear"></span> HEIR GENETICS. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById('currentYear').innerText = new Date().getFullYear();
+    </script>
+</body>
+</html>
