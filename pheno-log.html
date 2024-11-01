@@ -49,22 +49,23 @@
 
         .entry-list {
             margin-top: 20px;
+            overflow-x: auto;
         }
 
-        .entry-item {
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
             padding: 15px;
-            border-bottom: 1px solid #444;
-            position: relative;
+            text-align: left;
+            border: 1px solid #444;
         }
 
-        .entry-item:last-child {
-            border-bottom: none;
-        }
-
-        .entry-item h3 {
-            margin: 0;
-            font-size: 1.2em;
-            color: #f7b42c;
+        th {
+            background-color: #f7b42c;
         }
 
         .log-button {
@@ -77,22 +78,29 @@
             font-weight: bold;
             cursor: pointer;
             margin-top: 15px;
-            text-align: center;
         }
 
-        .entry-image {
-            width: 100%;
-            max-width: 150px;
-            height: auto;
-            margin-top: 10px;
-            border-radius: 8px;
-            cursor: pointer;
+        .entry-item {
+            position: relative;
         }
 
-        .image-preview-container {
+        .action-buttons {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
+        }
+
+        .edit-button, .delete-button {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .delete-button {
+            background-color: #e74c3c;
         }
 
         /* Overlay for enlarged image */
@@ -114,29 +122,6 @@
             max-height: 90%;
             border-radius: 8px;
         }
-
-        /* Action buttons */
-        .action-buttons {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            display: flex;
-            gap: 5px;
-        }
-
-        .edit-button, .delete-button {
-            background-color: #3498db;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 5px 10px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .delete-button {
-            background-color: #e74c3c;
-        }
     </style>
 </head>
 <body>
@@ -147,22 +132,11 @@
     <!-- Entry Form -->
     <div class="entry-form">
         <h2>New Pheno Entry</h2>
-        <label for="date">Date</label>
-        <input type="date" id="date" required>
-
-        <label for="age">Age from Seed (Days)</label>
-        <input type="text" id="age" placeholder="Enter the number of days">
-
         <label for="strain">Strain Name</label>
         <input type="text" id="strain" placeholder="Enter strain name">
 
-        <label for="traits">Observed Traits</label>
-        <textarea id="traits" placeholder="Enter observed phenotypic traits"></textarea>
-
-        <label for="images">Upload Images (up to 5)</label>
-        <input type="file" id="images" accept="image/*" multiple onchange="previewImages(event)">
-
-        <div class="image-preview-container" id="imagePreviewContainer"></div>
+        <label for="phenotype">Phenotype Observations</label>
+        <textarea id="phenotype" placeholder="Enter phenotype observations"></textarea>
 
         <button class="log-button" onclick="addEntry()">Add Entry</button>
     </div>
@@ -171,7 +145,18 @@
     <div class="entry-log">
         <h2>Pheno Log</h2>
         <div class="entry-list" id="entryList">
-            <!-- Entries will be dynamically added here -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Strain</th>
+                        <th>Phenotype</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="entryTableBody">
+                    <!-- Entries will be dynamically added here -->
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -181,50 +166,23 @@
     </div>
 
     <script>
-        const entryList = document.getElementById('entryList');
-        let imageBase64Array = [];
+        const entryTableBody = document.getElementById('entryTableBody');
         let editingIndex = null;
 
         window.onload = function() {
             loadEntries();
         };
 
-        function previewImages(event) {
-            const files = event.target.files;
-            imageBase64Array = [];
-            document.getElementById('imagePreviewContainer').innerHTML = "";
-
-            if (files.length > 5) {
-                alert('Please select up to 5 images.');
-                return;
-            }
-
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function() {
-                    imageBase64Array.push(reader.result);
-                    const img = document.createElement("img");
-                    img.src = reader.result;
-                    img.classList.add("entry-image");
-                    img.onclick = () => openOverlay(reader.result);
-                    document.getElementById('imagePreviewContainer').appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
         function addEntry() {
-            const date = document.getElementById('date').value;
-            const age = document.getElementById('age').value;
             const strain = document.getElementById('strain').value;
-            const traits = document.getElementById('traits').value;
+            const phenotype = document.getElementById('phenotype').value;
 
-            if (!date || !age || !strain || !traits) {
+            if (!strain || !phenotype) {
                 alert('Please fill out all fields before adding an entry.');
                 return;
             }
 
-            const entry = { date, age, strain, traits, images: imageBase64Array };
+            const entry = { strain, phenotype };
 
             let entries = JSON.parse(localStorage.getItem('entries')) || [];
 
@@ -239,38 +197,27 @@
             renderEntries();
 
             // Reset form
-            document.getElementById('date').value = '';
-            document.getElementById('age').value = '';
             document.getElementById('strain').value = '';
-            document.getElementById('traits').value = '';
-            document.getElementById('images').value = '';
-            document.getElementById('imagePreviewContainer').innerHTML = "";
-            imageBase64Array = [];
+            document.getElementById('phenotype').value = '';
         }
 
         function renderEntries() {
-            entryList.innerHTML = ""; // Clear existing entries
+            entryTableBody.innerHTML = ""; // Clear existing entries
             let entries = JSON.parse(localStorage.getItem('entries')) || [];
             entries.forEach((entry, index) => displayEntry(entry, index));
         }
 
         function displayEntry(entry, index) {
-            const entryItem = document.createElement('div');
-            entryItem.classList.add('entry-item');
-            entryItem.innerHTML = `
-                <h3>${entry.strain} - Day ${entry.age}</h3>
-                <p><strong>Date:</strong> ${entry.date}</p>
-                <p><strong>Traits:</strong> ${entry.traits}</p>
-                <div class="image-preview-container">
-                    ${entry.images.map(image => `<img src="${image}" class="entry-image" alt="${entry.strain} image" onclick="openOverlay('${image}')">`).join('')}
-                </div>
-                <div class="action-buttons">
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${entry.strain}</td>
+                <td>${entry.phenotype}</td>
+                <td class="action-buttons">
                     <button class="edit-button" onclick="editEntry(${index})">Edit</button>
                     <button class="delete-button" onclick="deleteEntry(${index})">Delete</button>
-                </div>
+                </td>
             `;
-
-            entryList.appendChild(entryItem);
+            entryTableBody.appendChild(row);
         }
 
         function loadEntries() {
@@ -288,20 +235,8 @@
             let entries = JSON.parse(localStorage.getItem('entries')) || [];
             let entry = entries[index];
 
-            document.getElementById('date').value = entry.date;
-            document.getElementById('age').value = entry.age;
             document.getElementById('strain').value = entry.strain;
-            document.getElementById('traits').value = entry.traits;
-            imageBase64Array = entry.images; // Preserve images for editing
-            document.getElementById('imagePreviewContainer').innerHTML = ""; // Clear existing previews
-
-            entry.images.forEach(image => {
-                const img = document.createElement("img");
-                img.src = image;
-                img.classList.add("entry-image");
-                img.onclick = () => openOverlay(image);
-                document.getElementById('imagePreviewContainer').appendChild(img);
-            });
+            document.getElementById('phenotype').value = entry.phenotype;
 
             editingIndex = index; // Set the index for editing
         }
