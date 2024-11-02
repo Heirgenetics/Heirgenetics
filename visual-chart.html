@@ -36,7 +36,7 @@
             display: block;
             margin: 10px 0 5px;
             font-weight: bold;
-            color: #00bfff;
+            color: #ff8c00; /* Orange color for labels */
         }
         select, input[type="text"] {
             width: 100%;
@@ -49,7 +49,7 @@
         }
         button {
             margin-top: 15px;
-            background: #00bfff;
+            background: #ff8c00; /* Orange background for button */
             border: none;
             padding: 10px 15px;
             border-radius: 4px;
@@ -59,7 +59,7 @@
             width: 100%;
         }
         button:hover {
-            background: #009acd;
+            background: #ff4500; /* Darker orange on hover */
         }
         #strain-list {
             list-style-type: none;
@@ -96,37 +96,33 @@
             color: #888;
             font-size: 0.9em;
         }
+        .header-image {
+            display: block;
+            margin: 20px auto 0;
+            width: 200px; /* Adjust as needed */
+            height: auto;
+        }
+        .header-link {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            color: #ff8c00;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .header-link:hover {
+            color: #ff4500;
+        }
     </style>
 </head>
 <body>
- 
-</head>
-<body>
-    <div style="text-align: center;">
+    <!-- Header and Description -->
     <h1>Phenotype Trait Tracker</h1>
-    <div style="text-align: center;">
     <p class="description">Track and log the phenotypic traits of your cannabis plants, visualize their growth stages, and analyze their characteristics.</p>
     
-    <img src="https://images.squarespace-cdn.com/content/v1/5f8db7b99027f25b74526d38/1608316502674-HWATZ0J523VOQ3IG0H0O/01+-+header+b.jpg" alt="Cannabis">
-    <div style="text-align: center;">
-    <div id="pheno-hunt-description">
-    <div style="text-align: center;">
-    <h2>Understanding Phenotypes in Your Pheno Hunt</h2>
-    <div style="text-align: center;">
-            <p>Tracking phenotypes during a pheno hunt is essential for growers aiming to select the best traits from their plants. By documenting the characteristics of each phenotype, you can make informed decisions about which plants to keep for future breeding or cultivation. This process enhances the overall quality and consistency of your yield, allowing you to identify traits such as growth rate, flavor profiles, and resistance to pests or diseases.
-            </p>
-            <p>
-                In botanical terms, a phenotype refers to the observable physical or biochemical characteristics of an organism, determined by both genetic makeup and environmental influences. This includes features like leaf shape, plant height, flower color, and yield. Understanding and tracking these traits can help you optimize your cultivation strategy and achieve your desired outcomes.
-            </p>
-            <h3>Tips for Tracking Your Pheno Hunt</h3>
-            <ul>
-                <li><strong>Maintain Detailed Records:</strong> Use a dedicated journal or digital platform to record the traits of each phenotype, including growth rates, leaf morphology, and any other significant observations.</li>
-                <li><strong>Standardize Your Measurements:</strong> Ensure consistency in how you measure and record data across different plants to facilitate better comparisons.</li>
-                <li><strong>Photograph Your Plants:</strong> Take regular photos to visually document growth stages and changes, which can serve as a valuable reference later.</li>
-                <li><strong>Utilize a Scoring System:</strong> Develop a scoring system for various traits to help prioritize which phenotypes show the most promise based on your goals.</li>
-                <li><strong>Engage with Other Growers:</strong> Share your findings and learn from others in the community to gain insights and improve your tracking methods.</li>
-            </ul>
-        </div>
+    <!-- Header Image Link -->
+    <a href="https://example.com" class="header-link">Visit Our Website</a>
+    <img src="https://www.shutterstock.com/shutterstock/videos/1057102544/thumb/1.jpg?ip=x480" alt="Phenotype Tracker Logo" class="header-image">
     
     <!-- Trait and Strain Form -->
     <div id="trait-form">
@@ -154,6 +150,12 @@
             <option>Terpene Profile</option>
             <option>Hardiness</option>
             <option>Potency</option>
+            <option>Internodal Spacing</option>
+            <option>Bud Shape</option>
+            <option>Leaf Thickness</option>
+            <option>Resistance to Humidity</option>
+            <option>Resistance to Mold</option>
+            <option>Seed Viability</option>
         </select>
         
         <label for="descriptionDropdown">Trait Description:</label>
@@ -173,6 +175,12 @@
             <option>Compact</option>
             <option>Open</option>
             <option>Dense</option>
+            <option>Elongated</option>
+            <option>Bushy</option>
+            <option>Thick</option>
+            <option>Thin</option>
+            <option>Sturdy</option>
+            <option>Fragile</option>
         </select>
         
         <label for="colorDropdown">Color:</label>
@@ -183,6 +191,10 @@
             <option>Blue</option>
             <option>Red</option>
             <option>Orange</option>
+            <option>Pink</option>
+            <option>Black</option>
+            <option>White</option>
+            <option>Brown</option>
         </select>
         
         <label for="growthRateDropdown">Growth Rate:</label>
@@ -191,6 +203,8 @@
             <option>Moderate</option>
             <option>Fast</option>
             <option>Very Fast</option>
+            <option>Accelerated</option>
+            <option>Stunted</option>
         </select>
         
         <label for="flavorProfileDropdown">Flavor Profile:</label>
@@ -201,156 +215,40 @@
             <option>Pine</option>
             <option>Spicy</option>
             <option>Fruity</option>
+            <option>Floral</option>
+            <option>Herbal</option>
+            <option>Woody</option>
+            <option>Diesel</option>
         </select>
         
         <button onclick="logTrait()">Log Trait</button>
     </div>
 
-    <!-- Strain List -->
-    <ul id="strain-list"></ul>
-
-    <!-- Growth Chart -->
-    <canvas id="growthChart" width="400" height="200"></canvas>
-
-    <!-- Footer -->
-    <footer>
-        © <span id="currentYear"></span> All rights reserved | heirgenetics.com
-    </footer>
+    <!-- Graph Section -->
+    <canvas id="traitChart" width="400" height="200"></canvas>
 
     <script>
-        // Initialize plant data with some default strains
-        let plantData = loadFromLocalStorage();
-
-        if (plantData.length === 0) {
-            plantData = [
-                { strain: "Exodus Cheese S1 #1", growthStages: [10, 20, 30, 40, 50], loggedTraits: [] },
-                { strain: "OG Kush #1", growthStages: [8, 15, 25, 35, 45], loggedTraits: [] }
-            ];
-            saveToLocalStorage(); // Save default data
-        }
-
-        const strainDropdown = document.getElementById("strainDropdown");
-        const strainList = document.getElementById("strain-list");
-
-        // Populate Strain Dropdown
-        function populateStrainDropdown() {
-            strainDropdown.innerHTML = "";
-            plantData.forEach(plant => {
-                const option = document.createElement("option");
-                option.value = plant.strain;
-                option.textContent = plant.strain;
-                strainDropdown.appendChild(option);
-            });
-        }
-
-        // Add New Strain
-        function addStrain() {
-            const newStrainInput = document.getElementById("newStrainInput");
-            const strainName = newStrainInput.value.trim();
-            
-            if (strainName) {
-                plantData.push({ strain: strainName, growthStages: [10, 20, 30, 40, 50], loggedTraits: [] });
-                populateStrainDropdown();
-                renderStrainList();
-                newStrainInput.value = ""; // Clear input field
-                saveToLocalStorage(); // Save to local storage
-            } else {
-                alert("Please enter a valid strain name.");
-            }
-        }
-
-        // Log Trait Function
-        function logTrait() {
-            const strainName = strainDropdown.value;
-            const trait = document.getElementById("traitDropdown").value;
-            const description = document.getElementById("descriptionDropdown").value;
-            const color = document.getElementById("colorDropdown").value;
-            const growthRate = document.getElementById("growthRateDropdown").value;
-            const flavorProfile = document.getElementById("flavorProfileDropdown").value;
-            
-            const dateLogged = new Date().toLocaleString();
-
-            const selectedPlant = plantData.find(plant => plant.strain === strainName);
-            selectedPlant.loggedTraits.push({ trait, description, color, growthRate, flavorProfile, dateLogged });
-
-            renderStrainList();
-            updateChart();
-            saveToLocalStorage(); // Save to local storage after logging a trait
-        }
-
-        // Render Strain List with Logged Traits, Date, and Delete Button
-        function renderStrainList() {
-            strainList.innerHTML = "";
-            plantData.forEach((plant, plantIndex) => {
-                const listItem = document.createElement("li");
-                listItem.innerHTML = `<strong>${plant.strain}</strong><br>Traits: ${plant.loggedTraits.map((t, traitIndex) => `
-                    <span>${t.trait}: ${t.description} (Color: ${t.color}, Growth Rate: ${t.growthRate}, Flavor: ${t.flavorProfile}, Logged on: ${t.dateLogged})</span>
-                    <button class="delete-log" onclick="deleteTrait(${plantIndex}, ${traitIndex})">Delete</button><br>
-                `).join("") || "No traits logged."}`;
-                strainList.appendChild(listItem);
-            });
-        }
-
-        // Delete Trait
-        function deleteTrait(plantIndex, traitIndex) {
-            plantData[plantIndex].loggedTraits.splice(traitIndex, 1);
-            renderStrainList();
-            saveToLocalStorage(); // Save to local storage after deletion
-        }
-
-        // Chart Implementation
-        const ctx = document.getElementById("growthChart").getContext("2d");
-        let growthChart;
-
-        function updateChart() {
-            const strainName = strainDropdown.value;
-            const selectedPlant = plantData.find(plant => plant.strain === strainName);
-            const growthStages = selectedPlant.growthStages;
-
-            if (growthChart) {
-                growthChart.destroy();
-            }
-
-            growthChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Stage 1', 'Stage 2', 'Stage 3', 'Stage 4', 'Stage 5'],
-                    datasets: [{
-                        label: strainName,
-                        data: growthStages,
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
+        const ctx = document.getElementById('traitChart').getContext('2d');
+        const traitChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Height', 'Yield', 'Flowering Time', 'Aroma', 'Bud Density', 'Resin Production'],
+                datasets: [{
+                    label: 'Trait Values',
+                    data: [5, 10, 7, 8, 6, 9],
+                    backgroundColor: 'rgba(255, 140, 0, 0.6)',
+                    borderColor: 'rgba(255, 140, 0, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
                     }
                 }
-            });
-        }
-
-        // Local Storage Functions
-        function saveToLocalStorage() {
-            localStorage.setItem("plantData", JSON.stringify(plantData));
-        }
-
-        function loadFromLocalStorage() {
-            const data = localStorage.getItem("plantData");
-            return data ? JSON.parse(data) : [];
-        }
-
-        // Initialize the app
-        populateStrainDropdown();
-        renderStrainList();
-        updateChart();
-
-        // Update current year in footer
-        document.getElementById("currentYear").textContent = new Date().getFullYear();
+            }
+        });
     </script>
 </body>
 </html>
