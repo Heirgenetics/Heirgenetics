@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trait Selection - Exodus Cheese S1</title>
+    <title>Phenotype Tracker - Exodus Cheese S1</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -14,12 +14,16 @@
             max-width: 800px;
             margin: auto;
             line-height: 1.6;
+            background-image: url('your-background-image-url.jpg'); /* Replace with your image URL */
+            background-size: cover;
+            background-position: center;
         }
 
         h1 {
             text-align: center;
             font-size: 2.5em;
             margin-bottom: 10px;
+            color: #ffb700;
         }
 
         h2 {
@@ -35,7 +39,7 @@
             padding: 20px;
             border: 1px solid #ffb700;
             border-radius: 8px;
-            background-color: #222;
+            background-color: rgba(34, 34, 34, 0.8); /* Semi-transparent background */
         }
 
         .plant-entry {
@@ -56,9 +60,10 @@
             display: block;
             margin-top: 10px;
             font-weight: bold;
+            color: #ffb700;
         }
 
-        input[type="text"], input[type="number"] {
+        select, input[type="text"], input[type="number"] {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -89,12 +94,32 @@
             text-align: center;
             margin-top: 40px;
             font-size: 0.8em;
+            color: #aaa;
+        }
+
+        #strainList {
+            margin-top: 20px;
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .delete-log {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .delete-log:hover {
+            background-color: #cc0000;
         }
     </style>
 </head>
 <body>
 
-    <h1>Trait Selection - Exodus Cheese S1</h1>
+    <h1>Phenotype Tracker - Exodus Cheese S1</h1>
     <h2>Track Growth and Estimate Harvest for Each Plant</h2>
 
     <div class="form-container">
@@ -102,6 +127,7 @@
         <div id="plantList"></div>
 
         <button class="submit-btn" id="submitBtn">Submit Traits</button>
+        <ul id="strainList"></ul>
     </div>
 
     <footer>
@@ -112,6 +138,8 @@
         document.getElementById('currentYear').innerText = new Date().getFullYear();
 
         const plantList = document.getElementById('plantList');
+        const strainList = document.getElementById('strainList');
+        const plantData = [];
 
         for (let i = 1; i <= 70; i++) {
             const plantEntry = document.createElement('div');
@@ -119,7 +147,13 @@
             plantEntry.innerHTML = `
                 <div class="plant-name">Exodus Cheese S1 Plant #${i}</div>
                 <label for="growthStage${i}">Growth Stage:</label>
-                <input type="text" id="growthStage${i}" placeholder="Enter growth stage for plant #${i}">
+                <select id="growthStage${i}">
+                    <option value="">Select growth stage</option>
+                    <option value="Seedling">Seedling</option>
+                    <option value="Vegetative">Vegetative</option>
+                    <option value="Flowering">Flowering</option>
+                    <option value="Harvest">Harvest</option>
+                </select>
 
                 <label for="height${i}">Height (cm):</label>
                 <input type="number" id="height${i}" placeholder="Enter height for plant #${i}" min="0">
@@ -128,10 +162,11 @@
                 <input type="text" id="healthStatus${i}" placeholder="Enter health status for plant #${i}">
             `;
             plantList.appendChild(plantEntry);
+            plantData.push({ plantNumber: i, loggedTraits: [] });
         }
 
         document.getElementById('submitBtn').addEventListener('click', function() {
-            const plantData = [];
+            const submittedData = [];
 
             for (let i = 1; i <= 70; i++) {
                 const growthStage = document.getElementById(`growthStage${i}`).value;
@@ -139,20 +174,43 @@
                 const healthStatus = document.getElementById(`healthStatus${i}`).value;
 
                 if (growthStage || height || healthStatus) { // Only push data if there's input
-                    plantData.push({
-                        plantNumber: i,
-                        growthStage: growthStage,
-                        height: height,
-                        healthStatus: healthStatus
-                    });
+                    const plantInfo = { 
+                        plantNumber: i, 
+                        growthStage: growthStage, 
+                        height: height, 
+                        healthStatus: healthStatus 
+                    };
+                    submittedData.push(plantInfo);
+                    // Log the trait in plantData
+                    const plant = plantData[i - 1];
+                    plant.loggedTraits.push(plantInfo);
                 }
             }
 
-            console.log('Submitted Plant Data:', plantData);
+            console.log('Submitted Plant Data:', submittedData);
 
-            // You can further process or send the plantData to a server as needed
+            renderStrainList();
             alert('Plant data submitted! Check console for details.');
         });
+
+        function renderStrainList() {
+            strainList.innerHTML = ""; // Clear existing list
+            plantData.forEach((plant, plantIndex) => {
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `${plant.plantNumber}: ${plant.loggedTraits.map((trait, traitIndex) => `
+                    <span>Growth Stage: ${trait.growthStage}, Height: ${trait.height}, Health: ${trait.healthStatus}</span>
+                    <button class="delete-log" onclick="deleteTrait(${plantIndex}, ${traitIndex})">Delete</button>
+                `).join(', ')}`;
+                strainList.appendChild(listItem);
+            });
+        }
+
+        function deleteTrait(plantIndex, traitIndex) {
+            const selectedPlant = plantData[plantIndex];
+            selectedPlant.loggedTraits.splice(traitIndex, 1); // Remove the trait
+            renderStrainList();
+        }
+
     </script>
 </body>
 </html>
