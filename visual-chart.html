@@ -3,151 +3,351 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plant Trait Selection</title>
+    <title>Phenotype Trait Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #000; /* Black background */
-            color: #fff; /* White text */
+            background-color: #000;
+            color: #fff;
         }
         h1 {
             text-align: center;
             color: #fff;
+        }
+        .description {
+            text-align: center;
+            color: #ccc;
+            margin: 10px 0 20px;
+            font-size: 1.2em;
+        }
+        #trait-form, #strain-list {
+            margin-top: 20px;
+        }
+        #trait-form {
+            background: #222;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+            color: #00bfff;
+        }
+        select, input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            background: #333;
+            color: #fff;
+            font-size: 1em;
+        }
+        button {
+            margin-top: 15px;
+            background: #00bfff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            color: #000;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        button:hover {
+            background: #009acd;
         }
         #strain-list {
             list-style-type: none;
             padding: 0;
         }
         #strain-list li {
-            padding: 10px;
-            background: #333; /* Dark gray background for list items */
+            padding: 15px;
+            background: #333;
             margin: 5px 0;
-            border: 1px solid #444; /* Darker border */
+            border: 1px solid #444;
             border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            transition: transform 0.2s;
+        }
+        #strain-list li:hover {
+            transform: scale(1.02);
+        }
+        .delete-log {
+            margin-left: 10px;
+            background: #ff4d4d;
+            border: none;
+            padding: 5px;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.8em;
         }
         canvas {
             margin-top: 20px;
             max-width: 100%;
         }
-        #metrics {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-around;
-        }
-        .metric {
-            background: #444; /* Darker gray for metrics */
-            padding: 10px;
-            border-radius: 4px;
+        footer {
             text-align: center;
-            flex: 1;
-            margin: 0 10px;
-        }
-        input {
-            padding: 5px;
-            border: 1px solid #666; /* Input border */
-            border-radius: 4px;
-            background: #555; /* Input background */
-            color: #fff; /* Input text color */
+            margin-top: 20px;
+            color: #888;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
-    <h1>Trait Selection for Exodus Cheese Strains</h1>
-    <ul id="strain-list">
-        <!-- Strains will be listed here -->
-        <!-- List items will be dynamically generated -->
-    </ul>
-    <canvas id="growthChart" width="400" height="200"></canvas> <!-- Growth Chart -->
-    <div id="metrics">
-        <!-- Growth metrics will be displayed here -->
+ 
+</head>
+<body>
+    <div style="text-align: center;">
+    <h1>Phenotype Trait Tracker</h1>
+    <p class="description">Track and log the phenotypic traits of your cannabis plants, visualize their growth stages, and analyze their characteristics.</p>
+    
+    <img src="https://static.vecteezy.com/system/resources/thumbnails/023/781/004/small_2x/ai-generated-ai-generative-macro-shot-of-realistic-cannabis-leaves-on-dark-moody-black-background-can-be-used-for-medicine-promotion-or-graphic-design-graphic-art-photo.jpg" alt="Cannabis">
+    <div id="pheno-hunt-description">
+    <h2>Understanding Phenotypes in Your Pheno Hunt</h2>
+            <p>
+                Tracking phenotypes during a pheno hunt is essential for growers aiming to select the best traits from their plants. By documenting the characteristics of each phenotype, you can make informed decisions about which plants to keep for future breeding or cultivation. This process enhances the overall quality and consistency of your yield, allowing you to identify traits such as growth rate, flavor profiles, and resistance to pests or diseases.
+            </p>
+            <p>
+                In botanical terms, a phenotype refers to the observable physical or biochemical characteristics of an organism, determined by both genetic makeup and environmental influences. This includes features like leaf shape, plant height, flower color, and yield. Understanding and tracking these traits can help you optimize your cultivation strategy and achieve your desired outcomes.
+            </p>
+            <h3>Tips for Tracking Your Pheno Hunt</h3>
+            <ul>
+                <li><strong>Maintain Detailed Records:</strong> Use a dedicated journal or digital platform to record the traits of each phenotype, including growth rates, leaf morphology, and any other significant observations.</li>
+                <li><strong>Standardize Your Measurements:</strong> Ensure consistency in how you measure and record data across different plants to facilitate better comparisons.</li>
+                <li><strong>Photograph Your Plants:</strong> Take regular photos to visually document growth stages and changes, which can serve as a valuable reference later.</li>
+                <li><strong>Utilize a Scoring System:</strong> Develop a scoring system for various traits to help prioritize which phenotypes show the most promise based on your goals.</li>
+                <li><strong>Engage with Other Growers:</strong> Share your findings and learn from others in the community to gain insights and improve your tracking methods.</li>
+            </ul>
+        </div>
+    
+    <!-- Trait and Strain Form -->
+    <div id="trait-form">
+        <label for="newStrainInput">Add New Strain:</label>
+        <input type="text" id="newStrainInput" placeholder="Enter new strain name">
+        <button onclick="addStrain()">Add Strain</button>
+
+        <label for="strainDropdown">Select Strain:</label>
+        <select id="strainDropdown"></select>
+        
+        <label for="traitDropdown">Select Trait:</label>
+        <select id="traitDropdown">
+            <option>Height</option>
+            <option>Yield</option>
+            <option>Flowering Time</option>
+            <option>Aroma</option>
+            <option>Bud Density</option>
+            <option>Resin Production</option>
+            <option>Resistance to Pests</option>
+            <option>Leaf Size</option>
+            <option>Stem Strength</option>
+            <option>Root Growth</option>
+            <option>Color Variation</option>
+            <option>Branching</option>
+            <option>Terpene Profile</option>
+            <option>Hardiness</option>
+            <option>Potency</option>
+        </select>
+        
+        <label for="descriptionDropdown">Trait Description:</label>
+        <select id="descriptionDropdown">
+            <option>Low</option>
+            <option>Medium</option>
+            <option>High</option>
+            <option>Very High</option>
+            <option>Exceptional</option>
+            <option>Poor</option>
+            <option>Good</option>
+            <option>Excellent</option>
+            <option>Weak</option>
+            <option>Strong</option>
+            <option>Robust</option>
+            <option>Vigorous</option>
+            <option>Compact</option>
+            <option>Open</option>
+            <option>Dense</option>
+        </select>
+        
+        <label for="colorDropdown">Color:</label>
+        <select id="colorDropdown">
+            <option>Green</option>
+            <option>Purple</option>
+            <option>Yellow</option>
+            <option>Blue</option>
+            <option>Red</option>
+            <option>Orange</option>
+        </select>
+        
+        <label for="growthRateDropdown">Growth Rate:</label>
+        <select id="growthRateDropdown">
+            <option>Slow</option>
+            <option>Moderate</option>
+            <option>Fast</option>
+            <option>Very Fast</option>
+        </select>
+        
+        <label for="flavorProfileDropdown">Flavor Profile:</label>
+        <select id="flavorProfileDropdown">
+            <option>Sweet</option>
+            <option>Earthy</option>
+            <option>Citrus</option>
+            <option>Pine</option>
+            <option>Spicy</option>
+            <option>Fruity</option>
+        </select>
+        
+        <button onclick="logTrait()">Log Trait</button>
     </div>
 
+    <!-- Strain List -->
+    <ul id="strain-list"></ul>
+
+    <!-- Growth Chart -->
+    <canvas id="growthChart" width="400" height="200"></canvas>
+
+    <!-- Footer -->
+    <footer>
+        © <span id="currentYear"></span> All rights reserved | heirgenetics.com
+    </footer>
+
     <script>
-        // Generate random growth data for the strains
-        const plantData = Array.from({ length: 70 }, (_, index) => {
-            const strainNumber = index + 1;
-            const growthStages = Array.from({ length: 5 }, () => Math.floor(Math.random() * 100) + 1); // Random growth data
-            return {
-                strain: `Exodus Cheese S1 #${strainNumber}`,
-                growthStages: growthStages,
-                height: Math.floor(Math.random() * 100) + 10, // Random height in cm
-                yield: Math.floor(Math.random() * 100) + 20, // Random yield in grams
-                floweringTime: Math.floor(Math.random() * 14) + 56 // Random flowering time in days
-            };
-        });
+        // Initialize plant data with some default strains
+        let plantData = loadFromLocalStorage();
 
-        // Populate the strain list and growth metrics
-        const strainList = document.getElementById('strain-list');
-        const metricsContainer = document.getElementById('metrics');
+        if (plantData.length === 0) {
+            plantData = [
+                { strain: "Exodus Cheese S1 #1", growthStages: [10, 20, 30, 40, 50], loggedTraits: [] },
+                { strain: "OG Kush #1", growthStages: [8, 15, 25, 35, 45], loggedTraits: [] }
+            ];
+            saveToLocalStorage(); // Save default data
+        }
 
-        plantData.forEach(plant => {
-            const listItem = document.createElement('li');
+        const strainDropdown = document.getElementById("strainDropdown");
+        const strainList = document.getElementById("strain-list");
 
-            // Create input for notes
-            const noteInput = document.createElement('input');
-            noteInput.type = 'text';
-            noteInput.placeholder = 'Add notes here...';
-            noteInput.style.width = '40%'; // Adjust width as needed
+        // Populate Strain Dropdown
+        function populateStrainDropdown() {
+            strainDropdown.innerHTML = "";
+            plantData.forEach(plant => {
+                const option = document.createElement("option");
+                option.value = plant.strain;
+                option.textContent = plant.strain;
+                strainDropdown.appendChild(option);
+            });
+        }
 
-            // Create strain name text
-            const strainText = document.createElement('span');
-            strainText.textContent = plant.strain;
-            strainText.style.flex = '1'; // Ensure the strain text takes the remaining space
+        // Add New Strain
+        function addStrain() {
+            const newStrainInput = document.getElementById("newStrainInput");
+            const strainName = newStrainInput.value.trim();
+            
+            if (strainName) {
+                plantData.push({ strain: strainName, growthStages: [10, 20, 30, 40, 50], loggedTraits: [] });
+                populateStrainDropdown();
+                renderStrainList();
+                newStrainInput.value = ""; // Clear input field
+                saveToLocalStorage(); // Save to local storage
+            } else {
+                alert("Please enter a valid strain name.");
+            }
+        }
 
-            listItem.appendChild(strainText);
-            listItem.appendChild(noteInput);
-            strainList.appendChild(listItem);
+        // Log Trait Function
+        function logTrait() {
+            const strainName = strainDropdown.value;
+            const trait = document.getElementById("traitDropdown").value;
+            const description = document.getElementById("descriptionDropdown").value;
+            const color = document.getElementById("colorDropdown").value;
+            const growthRate = document.getElementById("growthRateDropdown").value;
+            const flavorProfile = document.getElementById("flavorProfileDropdown").value;
+            
+            const dateLogged = new Date().toLocaleString();
 
-            // Create metric card
-            const metricCard = document.createElement('div');
-            metricCard.className = 'metric';
-            metricCard.innerHTML = `
-                <h3>${plant.strain}</h3>
-                <p>Height: ${plant.height} cm</p>
-                <p>Yield: ${plant.yield} g</p>
-                <p>Flowering Time: ${plant.floweringTime} days</p>
-            `;
-            metricsContainer.appendChild(metricCard);
-        });
+            const selectedPlant = plantData.find(plant => plant.strain === strainName);
+            selectedPlant.loggedTraits.push({ trait, description, color, growthRate, flavorProfile, dateLogged });
 
-        // Chart.js setup
-        const ctx = document.getElementById('growthChart').getContext('2d');
-        const chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
-                datasets: plantData.map(plant => ({
-                    label: plant.strain,
-                    data: plant.growthStages,
-                    borderColor: `hsl(${Math.random() * 360}, 100%, 50%)`, // Random color
-                    fill: false
-                }))
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Growth (cm)'
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Growth Stage'
+            renderStrainList();
+            updateChart();
+            saveToLocalStorage(); // Save to local storage after logging a trait
+        }
+
+        // Render Strain List with Logged Traits, Date, and Delete Button
+        function renderStrainList() {
+            strainList.innerHTML = "";
+            plantData.forEach((plant, plantIndex) => {
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `<strong>${plant.strain}</strong><br>Traits: ${plant.loggedTraits.map((t, traitIndex) => `
+                    <span>${t.trait}: ${t.description} (Color: ${t.color}, Growth Rate: ${t.growthRate}, Flavor: ${t.flavorProfile}, Logged on: ${t.dateLogged})</span>
+                    <button class="delete-log" onclick="deleteTrait(${plantIndex}, ${traitIndex})">Delete</button><br>
+                `).join("") || "No traits logged."}`;
+                strainList.appendChild(listItem);
+            });
+        }
+
+        // Delete Trait
+        function deleteTrait(plantIndex, traitIndex) {
+            plantData[plantIndex].loggedTraits.splice(traitIndex, 1);
+            renderStrainList();
+            saveToLocalStorage(); // Save to local storage after deletion
+        }
+
+        // Chart Implementation
+        const ctx = document.getElementById("growthChart").getContext("2d");
+        let growthChart;
+
+        function updateChart() {
+            const strainName = strainDropdown.value;
+            const selectedPlant = plantData.find(plant => plant.strain === strainName);
+            const growthStages = selectedPlant.growthStages;
+
+            if (growthChart) {
+                growthChart.destroy();
+            }
+
+            growthChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Stage 1', 'Stage 2', 'Stage 3', 'Stage 4', 'Stage 5'],
+                    datasets: [{
+                        label: strainName,
+                        data: growthStages,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
                         }
                     }
                 }
-            }
-        });
+            });
+        }
+
+        // Local Storage Functions
+        function saveToLocalStorage() {
+            localStorage.setItem("plantData", JSON.stringify(plantData));
+        }
+
+        function loadFromLocalStorage() {
+            const data = localStorage.getItem("plantData");
+            return data ? JSON.parse(data) : [];
+        }
+
+        // Initialize the app
+        populateStrainDropdown();
+        renderStrainList();
+        updateChart();
+
+        // Update current year in footer
+        document.getElementById("currentYear").textContent = new Date().getFullYear();
     </script>
 </body>
 </html>
