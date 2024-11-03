@@ -3,241 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phenotype Trait Tracker</title>
+    <title>Strain Logger</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: black; /* Set black background */
+            color: white;
             margin: 0;
             padding: 20px;
-            background-color: #000;
-            color: #fff;
+            text-align: center;
         }
         h1 {
-            text-align: center;
-            color: #fff;
+            font-size: 2.5em;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Optional shadow effect */
         }
-        .description {
-            text-align: center;
-            color: #ccc;
-            margin: 10px 0 20px;
-            font-size: 1.2em;
+        h2, h3 {
+            margin: 20px 0;
         }
-        #trait-form, #strain-list {
-            margin-top: 20px;
-        }
-        #trait-form {
-            background: #222;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-        }
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: bold;
-            color: #ff8c00; /* Orange color for labels */
-        }
-        select, input[type="text"] {
-            width: 100%;
-            padding: 8px;
+        input, button, select {
+            padding: 10px;
+            margin: 5px;
             border: none;
-            border-radius: 4px;
-            background: #333;
-            color: #fff;
-            font-size: 1em;
+            border-radius: 5px;
+            font-size: 16px;
         }
         button {
-            margin-top: 15px;
-            background: #ff8c00; /* Orange background for button */
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            color: #000;
+            background-color: #FF4500; /* Button color */
+            color: white;
             cursor: pointer;
-            transition: background 0.3s;
-            width: 100%;
+            transition: background-color 0.3s;
         }
         button:hover {
-            background: #ff4500; /* Darker orange on hover */
+            background-color: #FF6347; /* Button hover color */
         }
         #strain-list {
             list-style-type: none;
             padding: 0;
         }
         #strain-list li {
-            padding: 15px;
-            background: #333;
             margin: 5px 0;
-            border: 1px solid #444;
-            border-radius: 4px;
-            transition: transform 0.2s;
         }
-        #strain-list li:hover {
-            transform: scale(1.02);
-        }
-        .delete-log {
+        .edit-log, .delete-log {
             margin-left: 10px;
-            background: #ff4d4d;
-            border: none;
-            padding: 5px;
-            border-radius: 4px;
-            color: #fff;
-            cursor: pointer;
-            font-size: 0.8em;
+        }
+        #loggedTraitsList {
+            margin-top: 20px;
+            text-align: left; /* Align text to the left for better readability */
         }
         canvas {
             margin-top: 20px;
-            max-width: 100%;
-        }
-        footer {
-            text-align: center;
-            margin-top: 20px;
-            color: #888;
-            font-size: 0.9em;
-        }
-        .header-image {
-            display: block;
-            margin: 20px auto 0;
-            width: 200px; /* Adjust as needed */
-            height: auto;
-        }
-        .header-link {
-            display: block;
-            text-align: center;
-            margin-top: 10px;
-            color: #ff8c00;
-            font-weight: bold;
-            text-decoration: none;
-        }
-        .header-link:hover {
-            color: #ff4500;
         }
     </style>
 </head>
 <body>
-    <!-- Header and Description -->
     <h1>Phenotype Trait Tracker</h1>
-    <p class="description">Track and log the phenotypic traits of your cannabis plants, visualize their growth stages, and analyze their characteristics.</p>
-    
-    <!-- Header Image Link -->
-    <a href="https://example.com" class="header-link">Visit Our Website</a>
-    <img src="https://www.shutterstock.com/shutterstock/videos/1057102544/thumb/1.jpg?ip=x480" alt="Phenotype Tracker Logo" class="header-image">
-    
-    <!-- Trait and Strain Form -->
-    <div id="trait-form">
-        <label for="newStrainInput">Add New Strain:</label>
-        <input type="text" id="newStrainInput" placeholder="Enter new strain name">
-        <button onclick="addStrain()">Add Strain</button>
 
-        <label for="strainDropdown">Select Strain:</label>
-        <select id="strainDropdown"></select>
-        
-        <label for="traitDropdown">Select Trait:</label>
-        <select id="traitDropdown">
-            <option>Height</option>
-            <option>Yield</option>
-            <option>Flowering Time</option>
-            <option>Aroma</option>
-            <option>Bud Density</option>
-            <option>Resin Production</option>
-            <option>Resistance to Pests</option>
-            <option>Leaf Size</option>
-            <option>Stem Strength</option>
-            <option>Root Growth</option>
-            <option>Color Variation</option>
-            <option>Branching</option>
-            <option>Terpene Profile</option>
-            <option>Hardiness</option>
-            <option>Potency</option>
-            <option>Internodal Spacing</option>
-            <option>Bud Shape</option>
-            <option>Leaf Thickness</option>
-            <option>Resistance to Humidity</option>
-            <option>Resistance to Mold</option>
-            <option>Seed Viability</option>
-        </select>
-        
-        <label for="descriptionDropdown">Trait Description:</label>
-        <select id="descriptionDropdown">
-            <option>Low</option>
-            <option>Medium</option>
-            <option>High</option>
-            <option>Very High</option>
-            <option>Exceptional</option>
-            <option>Poor</option>
-            <option>Good</option>
-            <option>Excellent</option>
-            <option>Weak</option>
-            <option>Strong</option>
-            <option>Robust</option>
-            <option>Vigorous</option>
-            <option>Compact</option>
-            <option>Open</option>
-            <option>Dense</option>
-            <option>Elongated</option>
-            <option>Bushy</option>
-            <option>Thick</option>
-            <option>Thin</option>
-            <option>Sturdy</option>
-            <option>Fragile</option>
-        </select>
-        
-        <label for="colorDropdown">Color:</label>
-        <select id="colorDropdown">
-            <option>Green</option>
-            <option>Purple</option>
-            <option>Yellow</option>
-            <option>Blue</option>
-            <option>Red</option>
-            <option>Orange</option>
-            <option>Pink</option>
-            <option>Black</option>
-            <option>White</option>
-            <option>Brown</option>
-        </select>
-        
-        <label for="growthRateDropdown">Growth Rate:</label>
-        <select id="growthRateDropdown">
-            <option>Slow</option>
-            <option>Moderate</option>
-            <option>Fast</option>
-            <option>Very Fast</option>
-            <option>Accelerated</option>
-            <option>Stunted</option>
-        </select>
-        
-        <label for="flavorProfileDropdown">Flavor Profile:</label>
-        <select id="flavorProfileDropdown">
-            <option>Sweet</option>
-            <option>Earthy</option>
-            <option>Citrus</option>
-            <option>Pine</option>
-            <option>Spicy</option>
-            <option>Fruity</option>
-            <option>Floral</option>
-            <option>Herbal</option>
-            <option>Woody</option>
-            <option>Diesel</option>
-        </select>
-        
-        <button onclick="logTrait()">Log Trait</button>
-    </div>
+    <h2>Track and log the phenotypic traits of your cannabis plants, visualize their growth stages, and analyze their characteristics.</h2>
+    <h4><img src="https://www.shutterstock.com/image-photo/cannabis-flower-isolated-on-black-600nw-2405472169.jpg" alt="Phenotype Tracker Logo" class="header-image">
+    <img src="https://www.shutterstock.com/image-photo/cannabis-flower-isolated-on-black-600nw-2405472169.jpg" alt="Phenotype Tracker Logo" class="header-image"><h4>
 
-    <!-- Graph Section -->
+    <input type="text" id="strainInput" placeholder="Enter strain name">
+    <button onclick="addStrain()">Add Strain</button>
+
+    <h2>Strains</h2>
+    <select id="strainDropdown"></select>
+    <h3>Log Trait</h3>
+    <select id="traitDropdown">
+        <option value="Height">Height</option>
+        <option value="Yield">Yield</option>
+        <option value="Flowering Time">Flowering Time</option>
+    </select>
+    <input type="text" id="descriptionDropdown" placeholder="Description">
+    <input type="text" id="colorDropdown" placeholder="Color">
+    <input type="text" id="growthRateDropdown" placeholder="Growth Rate">
+    <input type="text" id="flavorProfileDropdown" placeholder="Flavor Profile">
+    <button onclick="logTrait()">Log Trait</button>
+
+    <h2>Logged Traits</h2>
+    <ul id="loggedTraitsList"></ul>
+
     <canvas id="traitChart" width="400" height="200"></canvas>
 
     <script>
+        let strains = [];
+        let loggedTraits = [];
+
+        function addStrain() {
+            const strainInput = document.getElementById('strainInput').value.trim();
+            if (strainInput && !strains.includes(strainInput)) {
+                strains.push(strainInput);
+                updateStrainDropdown();
+                updateStrainList();
+                document.getElementById('strainInput').value = ''; // Clear input
+            } else {
+                alert("Please enter a valid strain name or avoid duplicates.");
+            }
+        }
+
+        function updateStrainDropdown() {
+            const strainDropdown = document.getElementById('strainDropdown');
+            strainDropdown.innerHTML = ''; // Clear existing options
+
+            strains.forEach((strain) => {
+                const option = document.createElement('option');
+                option.value = strain;
+                option.textContent = strain;
+                strainDropdown.appendChild(option);
+            });
+        }
+
+        function updateStrainList() {
+            const strainList = document.getElementById('strain-list');
+            strainList.innerHTML = ''; // Clear the existing list
+
+            strains.forEach((strain, index) => {
+                const listItem = document.createElement('li');
+                listItem.textContent = strain;
+                
+                const editButton = document.createElement('button');
+                editButton.textContent = "Edit";
+                editButton.className = 'edit-log';
+                editButton.onclick = () => editStrain(index);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = "Delete";
+                deleteButton.className = 'delete-log';
+                deleteButton.onclick = () => deleteStrain(index);
+
+                listItem.appendChild(editButton);
+                listItem.appendChild(deleteButton);
+                strainList.appendChild(listItem);
+            });
+        }
+
+        function editStrain(index) {
+            const newStrain = prompt("Edit strain name:", strains[index]);
+            if (newStrain) {
+                strains[index] = newStrain.trim();
+                updateStrainDropdown();
+                updateStrainList();
+            }
+        }
+
+        function deleteStrain(index) {
+            if (confirm("Are you sure you want to delete this strain?")) {
+                strains.splice(index, 1);
+                updateStrainDropdown();
+                updateStrainList();
+            }
+        }
+
+        function logTrait() {
+            const strain = document.getElementById('strainDropdown').value;
+            const trait = document.getElementById('traitDropdown').value;
+            const description = document.getElementById('descriptionDropdown').value;
+            const color = document.getElementById('colorDropdown').value;
+            const growthRate = document.getElementById('growthRateDropdown').value;
+            const flavorProfile = document.getElementById('flavorProfileDropdown').value;
+
+            const dateTime = new Date().toLocaleString();
+            const logEntry = {
+                strain,
+                trait,
+                description,
+                color,
+                growthRate,
+                flavorProfile,
+                dateTime
+            };
+
+            loggedTraits.push(logEntry);
+            updateLoggedTraitsList();
+            console.log(logEntry); // For debugging
+
+            // Clear inputs after logging
+            document.getElementById('descriptionDropdown').value = '';
+            document.getElementById('colorDropdown').value = '';
+            document.getElementById('growthRateDropdown').value = '';
+            document.getElementById('flavorProfileDropdown').value = '';
+        }
+
+        function updateLoggedTraitsList() {
+            const loggedTraitsList = document.getElementById('loggedTraitsList');
+            loggedTraitsList.innerHTML = ''; // Clear the existing list
+
+            loggedTraits.forEach(entry => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `Strain: ${entry.strain}, Trait: ${entry.trait}, Description: ${entry.description}, Color: ${entry.color}, Growth Rate: ${entry.growthRate}, Flavor Profile: ${entry.flavorProfile}, Logged on: ${entry.dateTime}`;
+                loggedTraitsList.appendChild(listItem);
+            });
+        }
+
         const ctx = document.getElementById('traitChart').getContext('2d');
         const traitChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Height', 'Yield', 'Flowering Time', 'Aroma', 'Bud Density', 'Resin Production'],
+                labels: ['Height', 'Yield', 'Flowering Time'], // Example labels
                 datasets: [{
                     label: 'Trait Values',
-                    data: [5, 10, 7, 8, 6, 9],
-                    backgroundColor: 'rgba(255, 140, 0, 0.6)',
-                    borderColor: 'rgba(255, 140, 0, 1)',
+                    data: [12, 15, 8], // Example data
+                    backgroundColor: 'rgba(255, 69, 0, 0.5)',
+                    borderColor: 'rgba(255, 69, 0, 1)',
                     borderWidth: 1
                 }]
             },
